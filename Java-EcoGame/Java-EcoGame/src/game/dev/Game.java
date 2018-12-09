@@ -1,5 +1,3 @@
-//hello world
-
 package game.dev;
 
 import java.awt.Graphics;
@@ -7,8 +5,14 @@ import java.awt.image.BufferStrategy;
 
 import game.dev.display.Camera;
 import game.dev.display.Display;
+import game.dev.gfx.Assets;
+import game.dev.input.KeyManager;
+import game.dev.input.MouseManager;
 import game.dev.state.GameState;
+import game.dev.state.MenuState;
 import game.dev.state.State;
+import game.dev.tile.Tile;
+import game.dev.world.World;
 
 public class Game implements Runnable{
 	
@@ -22,6 +26,10 @@ public class Game implements Runnable{
 	private int width, height;
 	private String title;
 	
+	//input
+	private KeyManager keyManager;
+	private MouseManager mouseManager;
+	
 	//handler
 	private Handler handler;
 	
@@ -29,32 +37,45 @@ public class Game implements Runnable{
 	private Camera camera;
 	
 	//states
-	private State gameState;
+	public State gameState;
+	public State menuState;
 	
 	public Game(String title, int width, int height) {
 		this.width = width;
 		this.height = height;
 		this.title = title;
-		
-		start();
+		keyManager = new KeyManager();
+		mouseManager = new MouseManager();
 	}
 	
 	private void init() {
 		display = new Display(title, width, height);
+		display.getJFrame().addKeyListener(keyManager);
+		display.getJFrame().addMouseListener(mouseManager);
+		display.getJFrame().addMouseMotionListener(mouseManager);
+		display.getCanvas().addMouseListener(mouseManager);
+		display.getCanvas().addMouseMotionListener(mouseManager);
+		Assets.init();
 		
 		handler = new Handler(this);
-		camera = new Camera(handler, 10, 10);
-		
+		camera = new Camera(handler, 0, 0);
 		//init states
 		gameState = new GameState(handler);
-		State.setcState(gameState);
+		menuState = new MenuState(handler);
+		//State.setcState(gameState);
+		State.setcState(menuState);
+		
 	}
-	
 	private void update() {
+		//System.out.println(handler.getWorld().checkBlock());
+		camera.moveCamera();
+		
 		if(State.getcState() != null) {
 			State.getcState().update();
 		}
+		
 	}
+	
 	
 	private void render() {
 		bs = display.getCanvas().getBufferStrategy();
@@ -73,6 +94,14 @@ public class Game implements Runnable{
 		// End Crap
 		bs.show();
 		g.dispose();
+	}
+	
+	public KeyManager getKeyManager() {
+		return keyManager;
+	}
+	
+	public MouseManager getMouseManager() {
+		return mouseManager;
 	}
 	
 	public int getWidth() {
@@ -95,10 +124,18 @@ public class Game implements Runnable{
 		return camera;
 	}
 	
+	public Display getDisplay() {
+		return display;
+	}
+
+	public void setDisplay(Display display) {
+		this.display = display;
+	}
+	
 	//////////////////////////////////////////////////////
 
 	//////////////////////////////////////////////////////
-	
+
 	public void run() {
 		init();
 		

@@ -1,12 +1,16 @@
 package game.dev.tile;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import game.dev.Handler;
+import game.dev.gfx.Assets;
 
 public class GrassTile extends Tile{
 	
-	GrassTile(int id){
-		super(Color.GREEN, id);
+	public GrassTile(Handler handler, int x, int y){
+		super(handler, Assets.grassTile, x, y);
+	}
+	@Override
+	public boolean canBuild() {
+		return true;
 	}
 	
 }

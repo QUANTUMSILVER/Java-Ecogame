@@ -21,7 +21,8 @@ public abstract class State {
 		this.handler = handler;
 	}
 	
-	public abstract void render(Graphics g);
 	public abstract void update();
+	
+	public abstract void render(Graphics g);
 	
 }

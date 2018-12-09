@@ -10,4 +10,5 @@ public abstract class Creature extends Entity{
 		// TODO Auto-generated constructor stub
 	}
 
+
 }
